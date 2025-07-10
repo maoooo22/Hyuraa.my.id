@@ -60,7 +60,7 @@
   <div id="content">Loading data...</div>
 
   <script>
-    const apiUrl = "/api/growdata"; // Gunakan proxy API
+    const apiUrl = "/api/growdata"; // Proxy API
 
     fetch(apiUrl)
       .then(res => res.json())
@@ -68,16 +68,23 @@
         const container = document.getElementById("content");
         container.innerHTML = ""; // Kosongkan loading
 
+        if (!data.result) {
+          container.innerHTML = "<p style='color:red;'>Data kosong atau error!</p>";
+          console.error("Data API:", data);
+          return;
+        }
+
         const categories = ["seeds", "gear", "eggs", "cosmetics", "honey"];
 
         categories.forEach(category => {
-          if (!data.result[category]) return;
+          const items = data.result[category];
+          if (!items) return;
 
           const title = document.createElement("h2");
           title.textContent = category.charAt(0).toUpperCase() + category.slice(1);
           container.appendChild(title);
 
-          data.result[category].forEach(item => {
+          items.forEach(item => {
             const itemDiv = document.createElement("div");
             itemDiv.className = "item";
 
