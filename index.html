@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grow a Garden Stock</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 40px;
+      color: #333;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .item img {
+      width: 64px;
+      height: 64px;
+      margin-right: 15px;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .item-info strong {
+      font-size: 18px;
+    }
+
+    .rarity {
+      font-size: 0.85em;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Grow a Garden Stock Viewer</h1>
+  <div id="content">Loading data...</div>
+
+  <script>
+    const apiUrl = "/api/growdata"; // Gunakan proxy API
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("content");
+        container.innerHTML = ""; // Kosongkan loading
+
+        const categories = ["seeds", "gear", "eggs", "cosmetics", "honey"];
+
+        categories.forEach(category => {
+          if (!data.result[category]) return;
+
+          const title = document.createElement("h2");
+          title.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+          container.appendChild(title);
+
+          data.result[category].forEach(item => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "item";
+
+            const img = document.createElement("img");
+            img.src = item.imageUrl || "https://via.placeholder.com/64?text=No+Image";
+
+            const info = document.createElement("div");
+            info.className = "item-info";
+            info.innerHTML = `
+              <strong>${item.name}</strong>
+              <span class="rarity">Qty: ${item.quantity} • Rarity: ${item.rarity || '-'}</span>
+              <span>Category: ${item.category}</span>
+            `;
+
+            itemDiv.appendChild(img);
+            itemDiv.appendChild(info);
+            container.appendChild(itemDiv);
+          });
+        });
+      })
+      .catch(error => {
+        document.getElementById("content").textContent = "Gagal ambil data: " + error.message;
+        console.error("Fetch error:", error);
+      });
+  </script>
+</body>
+</html>
