@@ -4,10 +4,6 @@
     {
       "source": "/brat",
       "destination": "/brat.html"
-    },
-    {
-      "source": "/",
-      "destination": "/index.html"
     }
   ]
 }
