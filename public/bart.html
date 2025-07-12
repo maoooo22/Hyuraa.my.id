@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brat Sticker Generator</title>
+  <link rel="stylesheet" href="/brat.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Brat Sticker Generator</h1>
+    <p>Masukkan teks kamu di bawah, hasil akan jadi sticker. Screenshot aja ya!</p>
+
+    <textarea id="inputText" placeholder="Contoh: gua ganteng bgttt 😎" rows="4"></textarea>
+    <button onclick="generateSticker()">Kirim</button>
+
+    <div id="loading" class="hidden">Loading sticker...</div>
+    <div id="preview" class="hidden">
+      <h3>Hasil Sticker:</h3>
+      <img id="stickerResult" alt="Hasil sticker brat" />
+    </div>
+  </div>
+
+  <script>
+    async function generateSticker() {
+      const text = document.getElementById("inputText").value.trim();
+      const loading = document.getElementById("loading");
+      const preview = document.getElementById("preview");
+      const img = document.getElementById("stickerResult");
+
+      if (!text) return alert("Isi teks dulu bang!");
+
+      loading.classList.remove("hidden");
+      preview.classList.add("hidden");
+
+      try {
+        const res = await fetch(`/api/bratsticker`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        if (!res.ok) throw new Error("Gagal ambil sticker");
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        img.src = url;
+        loading.classList.add("hidden");
+        preview.classList.remove("hidden");
+      } catch (err) {
+        alert("Error: " + err.message);
+        loading.classList.add("hidden");
+      }
+    }
+  </script>
+</body>
+</html>
